@@ -1,7 +1,6 @@
 package org.example;
 
-import io.qameta.allure.Description;
-import io.qameta.allure.Step;
+import io.qameta.allure.*;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
@@ -14,12 +13,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Test class for validating API responses for user requests
  */
+@Epic("User API")
+@Story("Retrieve user information")
+@Feature("User Retrieval")
 public class ApiUserRequestTests {
 
 
     @Test
     @Description("Tests GET response status code")
-    public void testStatusCode() {
+    public void testResponseStatusCodeForUserGetApi() {
         Response response = getUserResponseById(1);
         validateResponseStatusCode(response, 200);
     }
@@ -27,7 +29,7 @@ public class ApiUserRequestTests {
 
     @Test
     @Description("Test response body contain correct user ID")
-    public void testUserIdInResponse() {
+    public void testUserIdInResponseForUserGetApi() {
         Response response = getUserResponseById(1);
         validateUserIdInResponse(response, 1);
     }
@@ -53,7 +55,7 @@ public class ApiUserRequestTests {
      */
     @Step("Validate user ID in response matches expected ID={userID}")
     public void validateUserIdInResponse(Response response, int userID) {
-        assertEquals(userID, response.jsonPath().getInt("data.id"));
+        assertEquals(userID, response.jsonPath().getInt("data.id"),  "Expected user ID does not match the response");
     }
 
 
