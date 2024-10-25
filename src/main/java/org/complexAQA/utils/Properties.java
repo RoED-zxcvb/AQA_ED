@@ -6,9 +6,7 @@ import java.io.InputStream;
 
 public class Properties {
 
-    private static java.util.Properties props = new java.util.Properties();
-    private static final String HOST;
-    private static final String USER_URL;
+    private static final java.util.Properties props = new java.util.Properties();
 
 
     static {
@@ -24,25 +22,15 @@ public class Properties {
             throw new RuntimeException("Failed to load properties file", e);
         }
 
-        HOST = getPropertyValue("host");
-        USER_URL = getPropertyValue("userURL");
     }
 
 
-    private static String getPropertyValue(String key) {
+    public static String getPropertyValue(String key) {
         String value = props.getProperty(key);
         if (value == null || value.isEmpty()) {
             throw new IllegalStateException("Missing required property: " + key);
         }
         return value;
-    }
-
-    public static String getHost() {
-        return HOST;
-    }
-
-    public static String getUserUrl() {
-        return USER_URL;
     }
 
 }
