@@ -6,6 +6,8 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.complexAQA.utils.Properties;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -19,19 +21,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ApiUserRequestTests {
 
 
+    @Description("Verifies that the response status code is 200 for a valid user request")
     @Test
-    @Description("Tests GET response status code")
-    public void testResponseStatusCodeForUserGetApi() {
+    public void testResponseStatusCodeForUserGetApi200() {
         Response response = getUserResponseById(1);
         validateResponseStatusCode(response, 200);
     }
 
 
-    @Test
-    @Description("Test response body contain correct user ID")
-    public void testUserIdInResponseForUserGetApi() {
-        Response response = getUserResponseById(1);
-        validateUserIdInResponse(response, 1);
+    @ParameterizedTest
+    @ValueSource(ints = {1,2,5})
+    @Description("Verification of correct User ID in response for multiple users")
+    public void testUserIdInResponseForUserGetApi(int userID) {
+        Response response = getUserResponseById(userID);
+        validateUserIdInResponse(response, userID);
     }
 
 
