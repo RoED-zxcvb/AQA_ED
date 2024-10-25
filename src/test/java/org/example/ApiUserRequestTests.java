@@ -34,10 +34,7 @@ public class ApiUserRequestTests {
      */
     @Test
     public void statusCodeTestWithRestAssured() {
-
-        response.then()
-                .statusCode(200);
-
+        response.then().statusCode(200);
     }
 
 
