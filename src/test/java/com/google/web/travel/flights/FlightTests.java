@@ -17,18 +17,10 @@ public class FlightTests {
     @Test
     public void someTest (){
         flightsPage.open();
-        flightsPage.setTextForFieldFrom("izmir");
-        flightsPage.getAirportFromListByNumber(1);
-        flightsPage.setTextForFieldTo("Lisbon");
-        flightsPage.getAirportFromListByNumber(1);
-        flightsPage.setTextForFieldDepartureDate("Wed, Jan 6");
-//        flightsPage.clickExplore();
-
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        flightsPage.setTextForFieldFrom("Lis");
+        flightsPage.setDepartureAirportFromListByNumber(0);
+        flightsPage.setTextForFieldTo("Izmi");
+        flightsPage.setArrivalAirportFromListByNumber(0);
 
     }
 
