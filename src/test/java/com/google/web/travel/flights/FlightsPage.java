@@ -36,7 +36,7 @@ public class FlightsPage {
 
     public FlightsPage(WebDriver webDriver) {
         this.webDriver = webDriver;
-        wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
+        wait = new WebDriverWait(webDriver, Duration.ofSeconds(2));
         PageFactory.initElements(this.webDriver, this);
 
     }
@@ -127,6 +127,9 @@ public class FlightsPage {
         webElements.stream().filter(WebElement::isDisplayed).forEach(i -> System.out.println(
                 "Text:"
                         + i.getText()
+                        + "\n"
+                        + "Displayed:"
+                        + i.isDisplayed()
                         + "\n"
                         + "HTML:"
                         + i.getAttribute("innerHTML")

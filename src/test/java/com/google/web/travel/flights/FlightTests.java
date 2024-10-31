@@ -22,6 +22,8 @@ public class FlightTests {
         flightsPage.setTextForFieldTo("Izmir");
         flightsPage.setArrivalAirportFromListByNumber(0);
 
+        flightsPage.sleep3sec();
+
     }
 
     @AfterEach
