@@ -2,6 +2,7 @@ package com.google.web.travel.flights;
 
 import org.complexAQA.utils.Properties;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
@@ -65,9 +66,11 @@ public class FlightsPage {
     }
 
     public void expandCitiesInAirportLists() {
-        List<WebElement> listOfCountriesTogglesElements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(listOfCountriesToggles));
-
-        listOfCountriesTogglesElements.forEach(i -> i.click());
+        try {
+            List<WebElement> listOfCountriesTogglesElements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(listOfCountriesToggles));
+            listOfCountriesTogglesElements.forEach(i -> i.click());
+        } catch (TimeoutException e) {
+        }
     }
 
     public void setArrivalAirportFromListByNumber(int number) {

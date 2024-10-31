@@ -17,9 +17,9 @@ public class FlightTests {
     @Test
     public void someTest (){
         flightsPage.open();
-        flightsPage.setTextForFieldFrom("Lis");
+        flightsPage.setTextForFieldFrom("Lisbon");
         flightsPage.setDepartureAirportFromListByNumber(0);
-        flightsPage.setTextForFieldTo("Izmi");
+        flightsPage.setTextForFieldTo("Izmir");
         flightsPage.setArrivalAirportFromListByNumber(0);
 
     }
