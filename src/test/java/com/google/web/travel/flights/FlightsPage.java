@@ -192,6 +192,9 @@ public class FlightsPage {
         return flight.findElement(arriveAirportIATA).getText();
     }
 
+    public String getFlightNumberOfStops(WebElement flight) {
+        return flight.findElement(flightNumberOfStops).getText();
+    }
 
 
     public void sleep3sec() {

@@ -1,7 +1,6 @@
 package com.google.web.travel.flights;
 
 import org.junit.jupiter.api.*;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -47,12 +46,17 @@ public class FlightTests {
         );
 
         flights.forEach(i ->
-                {
-                    String airportCode = flightsPage.getArrivalAirportIATA(i);
 
-                    assertEquals("IST", airportCode);
-                }
+                    assertEquals("IST", flightsPage.getArrivalAirportIATA(i))
+
         );
+
+        flights.forEach(i ->
+
+                    assertEquals("Nonstop", flightsPage.getFlightNumberOfStops(i))
+
+        );
+
     }
 
     @AfterEach
