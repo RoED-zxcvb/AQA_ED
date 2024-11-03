@@ -1,6 +1,7 @@
 package com.google.web.travel.flights;
 
 import org.junit.jupiter.api.*;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -36,13 +37,22 @@ public class FlightTests {
         flightsPage.closeList();
 
         List<WebElement> flights = flightsPage.getListOfFlights();
+        flights.forEach(i ->
 
-        flights.forEach(i -> {
-                    String airportCode = flightsPage.getDepartureAirportCode(i);
+                {
+                    String airportCode = flightsPage.getDepartureAirportIATA(i);
+
                     assertEquals("ADB", airportCode);
                 }
         );
 
+        flights.forEach(i ->
+                {
+                    String airportCode = flightsPage.getArrivalAirportIATA(i);
+
+                    assertEquals("IST", airportCode);
+                }
+        );
     }
 
     @AfterEach

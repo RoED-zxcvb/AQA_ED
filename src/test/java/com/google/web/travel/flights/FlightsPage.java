@@ -7,6 +7,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FlightsPage {
@@ -45,7 +46,11 @@ public class FlightsPage {
 
     private final By listOfFlights = By.xpath("//*[@class='pIav2d']");
 
-    private final By departureAirportCODE = By.xpath("//*[contains(@class, 'PTuQse')]//span[contains(@jscontroller, 'cNtv4b')]");
+    private final By departureAirportIATA = By.xpath("(//*[contains(@class, 'PTuQse')]//span[contains(@jscontroller, 'cNtv4b')])[1]");
+
+    private final By arriveAirportIATA = By.xpath("(//*[contains(@class, 'PTuQse')]//span[contains(@jscontroller, 'cNtv4b')])[2]");
+
+    private final By flightNumberOfStops = By.xpath("//*[contains(@class, 'BbR8Ec')]");
 
 
     public FlightsPage(WebDriver webDriver) {
@@ -133,6 +138,9 @@ public class FlightsPage {
         WebElement oneWayButtonElement = wait.until(ExpectedConditions.visibilityOfElementLocated(oneWayButton));
 
         oneWayButtonElement.click();
+
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(oneWayButton));
+
     }
 
     public void clickDoneInCalendar() {
@@ -172,13 +180,19 @@ public class FlightsPage {
         wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(buttonCloseForStopsList)).stream().filter(WebElement::isDisplayed).toList().get(0).click();
     }
 
-    public List getListOfFlights() {
+    public List<WebElement> getListOfFlights() {
         return wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(listOfFlights)).stream().filter(WebElement::isDisplayed).toList();
     }
 
-    public String getDepartureAirportCode(WebElement flight) {
-        return flight.findElement(departureAirportCODE).getText();
+    public String getDepartureAirportIATA(WebElement flight) {
+        return flight.findElement(departureAirportIATA).getText();
     }
+
+    public String getArrivalAirportIATA(WebElement flight) {
+        return flight.findElement(arriveAirportIATA).getText();
+    }
+
+
 
     public void sleep3sec() {
         try {
@@ -189,12 +203,18 @@ public class FlightsPage {
     }
 
 
-    public void printElements(By by) {
+    public void printElementsWithBy(By by) {
 
         sleep3sec();
 
         List<WebElement> webElements = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(by));
 
+        printElementsWithWebElemetsList(wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(by)));
+
+
+    }
+
+    public void printElementsWithWebElemetsList(List<WebElement> webElements) {
 
         System.out.println("Total elements: " + webElements.size());
         System.out.println("Displayed elements: " + webElements.stream().filter(WebElement::isDisplayed).toList().size());
@@ -216,10 +236,9 @@ public class FlightsPage {
 
 
         sleep3sec();
-
-
     }
 }
+
 
 
 
