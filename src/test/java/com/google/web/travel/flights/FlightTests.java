@@ -1,13 +1,11 @@
 package com.google.web.travel.flights;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FlightTests {
     private WebDriver webDriver;
@@ -19,30 +17,27 @@ public class FlightTests {
         flightsPage = new FlightsPage(webDriver);
     }
 
-    @Test
-    public void someTest() {
+    @ParameterizedTest
+    @CsvSource({
+            "ADB, IST, 0",
+            "IST, ESB, 3",
+    })
+    public void someTest(String departureIASA, String arrivalIASA, int daysToAdd) {
         flightsPage.open();
-        flightsPage.setTextForFieldFrom("ADB");
+        flightsPage.setTextForFieldFrom(departureIASA);
         flightsPage.setDepartureAirportFromListByNumber(0);
-        flightsPage.setTextForFieldTo("IST");
+        flightsPage.setTextForFieldTo(arrivalIASA);
         flightsPage.setArrivalAirportFromListByNumber(0);
         flightsPage.chooseNumberOfTrips(FlightsPage.NumberOfTrips.ONE_WAY);
         flightsPage.clickToDepartureDateField();
-        flightsPage.chooseAvailableDepartureDateByIndex(0);
+        flightsPage.chooseAvailableDepartureDateByIndex(daysToAdd);
         flightsPage.clickDoneInCalendar();
         flightsPage.clickSearch();
         flightsPage.openListOfStopsNumber();
         flightsPage.changeStopsNumber(FlightsPage.StopNumbers.NONSTOP_ONLY);
         flightsPage.closeList();
-
-        flightsPage.verifyDepartureAirportIATAOfFlights("ADB", flightsPage.getListOfFlights());
-
-        flightsPage.verifyArrivalAirportIATAOfFlights("IST", flightsPage.getListOfFlights());
-
-
-
-
-
+        flightsPage.verifyDepartureAirportIATAOfFlights(departureIASA, flightsPage.getListOfFlights());
+        flightsPage.verifyArrivalAirportIATAOfFlights(arrivalIASA, flightsPage.getListOfFlights());
     }
 
     @AfterEach

@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FlightsPage {
 
-    private WebDriver webDriver;
+    private final WebDriver webDriver;
 
     WebDriverWait wait;
 
@@ -58,6 +58,7 @@ public class FlightsPage {
 
     public void open() {
         webDriver.navigate().to(googleFLightURL);
+        webDriver.manage().window().fullscreen();
     }
 
     public void setTextForFieldFrom(String textForSearch) {
@@ -83,8 +84,9 @@ public class FlightsPage {
     public void expandCitiesInAirportLists() {
         try {
             List<WebElement> listOfCountriesTogglesElements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(listOfCountriesToggles));
-            listOfCountriesTogglesElements.forEach(i -> i.click());
+            listOfCountriesTogglesElements.forEach(WebElement::click);
         } catch (TimeoutException e) {
+            System.out.println("no city lists with airports");
         }
     }
 
@@ -101,6 +103,7 @@ public class FlightsPage {
             WebElement fieldDepartureDateElement = wait.until(ExpectedConditions.elementToBeClickable(fieldDepartureDate));
             fieldDepartureDateElement.click();
         } catch (ElementClickInterceptedException e) {
+            System.out.println("Departure date again throw exception");
         }
     }
 
@@ -119,7 +122,7 @@ public class FlightsPage {
 
     public void chooseNumberOfTrips(NumberOfTrips numberOfTrips) {
 
-        WebElement tripTypeDropDownListButtonElement = wait.until(ExpectedConditions.visibilityOfElementLocated(DropDownListNumberOfTripsButton));
+        WebElement tripTypeDropDownListButtonElement = wait.until(ExpectedConditions.elementToBeClickable(DropDownListNumberOfTripsButton));
 
         tripTypeDropDownListButtonElement.click();
 
@@ -162,7 +165,7 @@ public class FlightsPage {
     }
 
     public void changeStopsNumber(StopNumbers stopNumbers) {
-        WebElement webElement = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[contains(@class, 'm76nmf') and .//*[text()='" + stopNumbers.filterText + "']]")));
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[contains(@class, 'm76nmf') and .//*[text()='" + stopNumbers.getFilterText() + "']]"))).click();
 
 
     }
@@ -173,7 +176,7 @@ public class FlightsPage {
         ONE_STOP_OR_FEWER("1 stop or fewer"),
         TWO_STOPS_OR_FEWER("2 stops or fewer");
 
-        private String filterText;
+        private final String filterText;
 
         StopNumbers(String filterText) {
             this.filterText = filterText;
@@ -186,7 +189,7 @@ public class FlightsPage {
 
     public void closeList() {
 
-        WebElement closeButton = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(buttonCloseForStopsList)).stream().filter(WebElement::isDisplayed).toList().get(0);
+        WebElement closeButton = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(buttonCloseForStopsList)).stream().filter(WebElement::isDisplayed).toList().getFirst();
 
         closeButton.click();
 
