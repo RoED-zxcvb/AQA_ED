@@ -26,36 +26,22 @@ public class FlightTests {
         flightsPage.setDepartureAirportFromListByNumber(0);
         flightsPage.setTextForFieldTo("IST");
         flightsPage.setArrivalAirportFromListByNumber(0);
-        flightsPage.chooseOneWayTrip();
+        flightsPage.chooseNumberOfTrips(FlightsPage.NumberOfTrips.ONE_WAY);
         flightsPage.clickToDepartureDateField();
-        flightsPage.chooseDepartureAvailableDateByIndex(2);
+        flightsPage.chooseAvailableDepartureDateByIndex(0);
         flightsPage.clickDoneInCalendar();
         flightsPage.clickSearch();
         flightsPage.openListOfStopsNumber();
         flightsPage.changeStopsNumber(FlightsPage.StopNumbers.NONSTOP_ONLY);
         flightsPage.closeList();
 
-        List<WebElement> flights = flightsPage.getListOfFlights();
-        flights.forEach(i ->
+        flightsPage.verifyDepartureAirportIATAOfFlights("ADB", flightsPage.getListOfFlights());
 
-                {
-                    String airportCode = flightsPage.getDepartureAirportIATA(i);
+        flightsPage.verifyArrivalAirportIATAOfFlights("IST", flightsPage.getListOfFlights());
 
-                    assertEquals("ADB", airportCode);
-                }
-        );
 
-        flights.forEach(i ->
 
-                    assertEquals("IST", flightsPage.getArrivalAirportIATA(i))
 
-        );
-
-        flights.forEach(i ->
-
-                    assertEquals("Nonstop", flightsPage.getFlightNumberOfStops(i))
-
-        );
 
     }
 

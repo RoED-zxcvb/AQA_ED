@@ -7,8 +7,9 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FlightsPage {
 
@@ -29,11 +30,9 @@ public class FlightsPage {
     private final By listOfDepartureAirports = By.xpath("//*[contains(@class, 'DFGgtd')]//*[contains(@class, 'n4HaVc')]");
     private final By listOfArrivalAirports = By.xpath("//*[contains(@class, 'DFGgtd')]//*[contains(@class, 'n4HaVc')]");
 
-    private final By buttonsOfCalendarDates = By.xpath("//*[contains(@class, 'WhDFk') and .//*[contains(@role, 'button')]]");
+    private final By buttonsOfCalendarDates = By.xpath("//*[contains(@class, 'WhDFk') and contains(@aria-hidden, 'false') and .//*[contains(@role, 'button')]]");
 
-    private final By tripTypeDropDownListButton = By.className("VfPpkd-aPP78e");
-
-    private final By oneWayButton = By.xpath("//li[contains(@class, 'VfPpkd-OkbHre-SfQLQb-M1Soyc-bN97Pc') and .//span[text()='One way']]");
+    private final By DropDownListNumberOfTripsButton = By.className("VfPpkd-aPP78e");
 
     private final By buttonDoneForCalendar = By.xpath("//button[contains(@class, 'VfPpkd-LgbsSe-OWXEXe-dgl2Hf') and .//span[text()='Done']]");
 
@@ -49,9 +48,6 @@ public class FlightsPage {
     private final By departureAirportIATA = By.xpath("(//*[contains(@class, 'PTuQse')]//span[contains(@jscontroller, 'cNtv4b')])[1]");
 
     private final By arriveAirportIATA = By.xpath("(//*[contains(@class, 'PTuQse')]//span[contains(@jscontroller, 'cNtv4b')])[2]");
-
-    private final By flightNumberOfStops = By.xpath("//*[contains(@class, 'BbR8Ec')]");
-
 
     public FlightsPage(WebDriver webDriver) {
         this.webDriver = webDriver;
@@ -108,39 +104,49 @@ public class FlightsPage {
         }
     }
 
-    public void clickToReturnDateField() {
-        WebElement fieldDepartureDateElement = wait.until(ExpectedConditions.visibilityOfElementLocated(fieldDepartureDate));
-        fieldDepartureDateElement.click();
-    }
-
-    //    TODO Подумать как выбирать дату
-    public void chooseDepartureAvailableDateByIndex(int dayNumber) {
-
+    /// First available day starts from 0
+    public void chooseAvailableDepartureDateByIndex(int dayNumber) {
 
         clickToDepartureDateField();
 
         List<WebElement> webElements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(buttonsOfCalendarDates));
 
-
         wait.until(ExpectedConditions.elementToBeClickable(webElements.get(dayNumber)));
-        webElements.get(dayNumber).click();
 
+        webElements.get(dayNumber).click();
 
     }
 
-    // TODO Сделать через Enum
-    public void chooseOneWayTrip() {
+    public void chooseNumberOfTrips(NumberOfTrips numberOfTrips) {
 
-        WebElement tripTypeDropDownListButtonElement = wait.until(ExpectedConditions.visibilityOfElementLocated(tripTypeDropDownListButton));
+        WebElement tripTypeDropDownListButtonElement = wait.until(ExpectedConditions.visibilityOfElementLocated(DropDownListNumberOfTripsButton));
 
         tripTypeDropDownListButtonElement.click();
 
-        WebElement oneWayButtonElement = wait.until(ExpectedConditions.visibilityOfElementLocated(oneWayButton));
+        WebElement numberOfTripsElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[contains(@class, 'VfPpkd-OkbHre-SfQLQb-M1Soyc-bN97Pc') and .//span[text()='" + numberOfTrips.getText() + "']]")));
+
+        WebElement oneWayButtonElement = wait.until(ExpectedConditions.visibilityOf(numberOfTripsElement));
 
         oneWayButtonElement.click();
 
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(oneWayButton));
+        wait.until(ExpectedConditions.invisibilityOf(numberOfTripsElement));
 
+    }
+
+    public enum NumberOfTrips {
+        ROUND_TRIP("Round trip"),
+        ONE_WAY("One way"),
+        MULTI_CITY("Multi-city");
+
+        private final String text;
+
+        NumberOfTrips(String text) {
+            this.text = text;
+        }
+
+        public String getText() {
+            return text;
+        }
     }
 
     public void clickDoneInCalendar() {
@@ -156,7 +162,9 @@ public class FlightsPage {
     }
 
     public void changeStopsNumber(StopNumbers stopNumbers) {
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[contains(@class, 'm76nmf') and .//*[text()='" + stopNumbers.text + "']]"))).click();
+        WebElement webElement = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[contains(@class, 'm76nmf') and .//*[text()='" + stopNumbers.filterText + "']]")));
+
+
     }
 
     public enum StopNumbers {
@@ -165,19 +173,24 @@ public class FlightsPage {
         ONE_STOP_OR_FEWER("1 stop or fewer"),
         TWO_STOPS_OR_FEWER("2 stops or fewer");
 
-        private String text;
+        private String filterText;
 
-        StopNumbers(String text) {
-            this.text = text;
+        StopNumbers(String filterText) {
+            this.filterText = filterText;
         }
 
-        public String getText() {
-            return text;
+        public String getFilterText() {
+            return filterText;
         }
     }
 
     public void closeList() {
-        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(buttonCloseForStopsList)).stream().filter(WebElement::isDisplayed).toList().get(0).click();
+
+        WebElement closeButton = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(buttonCloseForStopsList)).stream().filter(WebElement::isDisplayed).toList().get(0);
+
+        closeButton.click();
+
+        wait.until(ExpectedConditions.invisibilityOf(closeButton));
     }
 
     public List<WebElement> getListOfFlights() {
@@ -192,53 +205,21 @@ public class FlightsPage {
         return flight.findElement(arriveAirportIATA).getText();
     }
 
-    public String getFlightNumberOfStops(WebElement flight) {
-        return flight.findElement(flightNumberOfStops).getText();
+
+    public void verifyDepartureAirportIATAofFlight(String departureAirportIATA, WebElement flight) {
+        assertEquals(departureAirportIATA, getDepartureAirportIATA(flight));
     }
 
-
-    public void sleep3sec() {
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    public void verifyDepartureAirportIATAOfFlights(String departureAirportIATA, List<WebElement> flights) {
+        flights.forEach(i -> verifyDepartureAirportIATAofFlight(departureAirportIATA, i));
     }
 
-
-    public void printElementsWithBy(By by) {
-
-        sleep3sec();
-
-        List<WebElement> webElements = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(by));
-
-        printElementsWithWebElemetsList(wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(by)));
-
-
+    public void verifyArrivalAirportIATAofFlight(String arrivalAirportIATA, WebElement flight) {
+        assertEquals(arrivalAirportIATA, getArrivalAirportIATA(flight));
     }
 
-    public void printElementsWithWebElemetsList(List<WebElement> webElements) {
-
-        System.out.println("Total elements: " + webElements.size());
-        System.out.println("Displayed elements: " + webElements.stream().filter(WebElement::isDisplayed).toList().size());
-
-        webElements.stream().filter(WebElement::isDisplayed).forEach(i -> System.out.println(
-                "Text:"
-                        + i.getText()
-                        + "\n"
-                        + "Tag:"
-                        + i.getTagName()
-                        + "\n"
-                        + "Displayed:"
-                        + i.isDisplayed()
-                        + "\n"
-                        + "HTML:"
-                        + i.getAttribute("innerHTML")
-                        + "\n"
-        ));
-
-
-        sleep3sec();
+    public void verifyArrivalAirportIATAOfFlights(String arrivalAirportIATA, List<WebElement> flights) {
+        flights.forEach(i -> verifyArrivalAirportIATAofFlight(arrivalAirportIATA, i));
     }
 }
 
