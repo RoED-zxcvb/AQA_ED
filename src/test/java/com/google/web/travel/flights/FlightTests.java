@@ -22,7 +22,7 @@ public class FlightTests {
             "ADB, IST, 0",
             "IST, ESB, 3",
     })
-    public void someTest(String departureIASA, String arrivalIASA, int daysToAdd) {
+    public void testFLightIASAForNonStopDirectFLights(String departureIASA, String arrivalIASA, int daysToAdd) {
         flightsPage.open();
         flightsPage.setTextForFieldFrom(departureIASA);
         flightsPage.setDepartureAirportFromListByNumber(0);
