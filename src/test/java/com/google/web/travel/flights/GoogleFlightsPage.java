@@ -65,8 +65,9 @@ public class GoogleFlightsPage {
 
     public void waitLoadingEnds(){
         try{
-            WebElement loadingBarElement = wait.until(ExpectedConditions.visibilityOfElementLocated(loadingBar));
-            wait.until(ExpectedConditions.invisibilityOf(loadingBarElement));
+//            WebElement loadingBarElement = wait.until(ExpectedConditions.visibilityOfElementLocated(loadingBar));
+//            wait.until(ExpectedConditions.invisibilityOf(loadingBarElement));
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(loadingBar));
         }
         catch (TimeoutException E){
             System.out.println("Loading bar was very fast");
@@ -115,7 +116,7 @@ public class GoogleFlightsPage {
             WebElement fieldDepartureDateElement = wait.until(ExpectedConditions.elementToBeClickable(fieldDepartureDate));
             fieldDepartureDateElement.click();
         } catch (ElementClickInterceptedException e) {
-            System.out.println("Departure date again throw exception");
+            System.out.println("Departure date selected but again throw exception");
         }
     }
 
