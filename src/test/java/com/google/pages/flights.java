@@ -1,4 +1,4 @@
-package com.google.web.travel.flights;
+package com.google.pages;
 
 import org.complexAQA.utils.Properties;
 import org.openqa.selenium.*;
@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class GoogleFlightsPage {
+public class flights {
 
     private final WebDriver webDriver;
 
@@ -52,7 +52,7 @@ public class GoogleFlightsPage {
 
     private final By loadingBar = By.xpath("//button[contains(@aria-label, 'Close dialog')]");
 
-    public GoogleFlightsPage(WebDriver webDriver) {
+    public flights(WebDriver webDriver) {
         this.webDriver = webDriver;
         wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
         PageFactory.initElements(this.webDriver, this);

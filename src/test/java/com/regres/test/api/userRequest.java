@@ -1,4 +1,4 @@
-package in.regres.api;
+package com.regres.test.api;
 
 import io.qameta.allure.*;
 import io.restassured.RestAssured;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Epic("User API")
 @Story("Retrieve user information")
 @Feature("User Retrieval")
-public class ApiUserRequestTests {
+public class userRequest {
 
     private static final String REGRES_HOST = Properties.getPropertyValue("regresHost");
     private static final String USER_URL = Properties.getPropertyValue("userURL");

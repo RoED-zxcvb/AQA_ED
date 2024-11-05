@@ -1,7 +1,7 @@
-package com.google.web.travel.flights;
+package com.google.steps;
 
 // TODO уточнить где должен быть файл
-public class GoogleFlightSteps {
+public class flights {
 //
 //    public FlightsPage(WebDriver webDriver) {
 //        this.webDriver = webDriver;
