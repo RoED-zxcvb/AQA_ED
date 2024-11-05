@@ -1,4 +1,4 @@
-package com.regres.steps;
+package com.regresService.steps;
 
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;

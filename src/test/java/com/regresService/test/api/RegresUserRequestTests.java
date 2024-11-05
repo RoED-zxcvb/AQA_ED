@@ -1,6 +1,6 @@
-package com.regres.test.api;
+package com.regresService.test.api;
 
-import com.regres.steps.RegresUserRequestSteps;
+import com.regresService.steps.RegresUserRequestSteps;
 import io.qameta.allure.*;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
