@@ -7,14 +7,14 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 
-public class flights {
+public class Flights {
     private WebDriver webDriver;
-    private com.google.pages.flights flightsPage;
+    private com.google.pages.Flights flightsPage;
 
     @BeforeEach
     void beforeTestsActions() {
         webDriver = new ChromeDriver();
-        flightsPage = new com.google.pages.flights(webDriver);
+        flightsPage = new com.google.pages.Flights(webDriver);
     }
 
     @ParameterizedTest
@@ -29,13 +29,13 @@ public class flights {
         flightsPage.setDepartureAirportFromListByNumber(0);
         flightsPage.setTextForFieldTo(arrivalIASA);
         flightsPage.setArrivalAirportFromListByNumber(0);
-        flightsPage.chooseNumberOfTrips(com.google.pages.flights.NumberOfTrips.ONE_WAY);
+        flightsPage.chooseNumberOfTrips(com.google.pages.Flights.NumberOfTrips.ONE_WAY);
         flightsPage.clickToDepartureDateField();
         flightsPage.chooseAvailableDepartureDateByIndex(daysToAdd);
         flightsPage.clickDoneInCalendar();
         flightsPage.clickSearch();
         flightsPage.openListOfStopsNumber();
-        flightsPage.changeStopsNumber(com.google.pages.flights.StopNumbers.NONSTOP_ONLY);
+        flightsPage.changeStopsNumber(com.google.pages.Flights.StopNumbers.NONSTOP_ONLY);
         flightsPage.closeList();
         flightsPage.verifyDepartureAirportIATAOfFlights(departureIASA, flightsPage.getListOfFlights());
         flightsPage.verifyArrivalAirportIATAOfFlights(arrivalIASA, flightsPage.getListOfFlights());

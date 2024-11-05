@@ -1,7 +1,7 @@
 package com.google.steps;
 
 // TODO уточнить где должен быть файл
-public class flights {
+public class Flights {
 //
 //    public FlightsPage(WebDriver webDriver) {
 //        this.webDriver = webDriver;

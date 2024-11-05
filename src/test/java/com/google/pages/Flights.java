@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class flights {
+public class Flights {
 
     private final WebDriver webDriver;
 
@@ -52,7 +52,7 @@ public class flights {
 
     private final By loadingBar = By.xpath("//button[contains(@aria-label, 'Close dialog')]");
 
-    public flights(WebDriver webDriver) {
+    public Flights(WebDriver webDriver) {
         this.webDriver = webDriver;
         wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
         PageFactory.initElements(this.webDriver, this);

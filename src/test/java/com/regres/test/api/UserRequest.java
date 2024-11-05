@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Epic("User API")
 @Story("Retrieve user information")
 @Feature("User Retrieval")
-public class userRequest {
+public class UserRequest {
 
     private static final String REGRES_HOST = Properties.getPropertyValue("regresHost");
     private static final String USER_URL = Properties.getPropertyValue("userURL");
