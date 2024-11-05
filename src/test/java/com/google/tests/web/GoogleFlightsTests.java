@@ -25,20 +25,20 @@ public class GoogleFlightsTests {
     })
     public void testFLightIASAForNonStopDirectFLights(String departureIASA, String arrivalIASA, int daysToAdd) {
         googleFlightsSteps.open();
-        googleFlightsSteps.setTextForFieldFrom(departureIASA);
-        googleFlightsSteps.setDepartureAirportFromListByNumber(0);
-        googleFlightsSteps.setTextForFieldTo(arrivalIASA);
+        googleFlightsSteps.enterDepartureAirport(departureIASA);
+        googleFlightsSteps.selectDepartureAirportByIndex(0);
+        googleFlightsSteps.enterArrivalAirport(arrivalIASA);
         googleFlightsSteps.setArrivalAirportFromListByNumber(0);
-        googleFlightsSteps.chooseNumberOfTrips(GoogleFlightsSteps.NumberOfTrips.ONE_WAY);
+        googleFlightsSteps.changeNumberOfTrips(GoogleFlightsSteps.NumberOfTrips.ONE_WAY);
         googleFlightsSteps.clickToDepartureDateField();
         googleFlightsSteps.chooseAvailableDepartureDateByIndex(daysToAdd);
         googleFlightsSteps.clickDoneInCalendar();
-        googleFlightsSteps.clickSearch();
-        googleFlightsSteps.openListOfStopsNumber();
-        googleFlightsSteps.changeStopsNumber(GoogleFlightsSteps.StopNumbers.NONSTOP_ONLY);
-        googleFlightsSteps.closeList();
+        googleFlightsSteps.clickButtonSearch();
+        googleFlightsSteps.openStopsFilter();
+        googleFlightsSteps.changeStopsFilter(GoogleFlightsSteps.StopNumbers.NONSTOP_ONLY);
+        googleFlightsSteps.closeFilter();
         googleFlightsSteps.verifyDepartureAirportIATAOfFlights(departureIASA, googleFlightsSteps.getListOfFlights());
-        googleFlightsSteps.verifyArrivalAirportIATAOfFlights(arrivalIASA, googleFlightsSteps.getListOfFlights());
+        googleFlightsSteps.assertArrivalAirportIATAOfFlights(arrivalIASA, googleFlightsSteps.getListOfFlights());
     }
 
     @AfterEach

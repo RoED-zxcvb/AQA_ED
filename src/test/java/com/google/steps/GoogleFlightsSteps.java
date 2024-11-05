@@ -38,19 +38,19 @@ public class GoogleFlightsSteps {
         }
     }
 
-    public void setTextForFieldFrom(String textForSearch) {
+    public void enterDepartureAirport(String textForSearch) {
         WebElement fieldFromElement = wait.until(ExpectedConditions.visibilityOfElementLocated(googleFlightsPage.getFieldFrom()));
         fieldFromElement.clear();
         fieldFromElement.sendKeys(textForSearch);
     }
 
-    public void setTextForFieldTo(String textForSearch) {
+    public void enterArrivalAirport(String textForSearch) {
         WebElement fieldToElement = wait.until(ExpectedConditions.visibilityOfElementLocated(googleFlightsPage.getFieldTo()));
         fieldToElement.clear();
         fieldToElement.sendKeys(textForSearch);
     }
 
-    public void setDepartureAirportFromListByNumber(int number) {
+    public void selectDepartureAirportByIndex(int number) {
         expandCitiesInAirportLists();
 
         List<WebElement> listOfAirportsElements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(googleFlightsPage.getListOfDepartureAirports()));
@@ -97,13 +97,13 @@ public class GoogleFlightsSteps {
 
     }
 
-    public void chooseNumberOfTrips(NumberOfTrips numberOfTrips) {
+    public void changeNumberOfTrips(NumberOfTrips numberOfTrips) {
 
         WebElement tripTypeDropDownListButtonElement = wait.until(ExpectedConditions.elementToBeClickable(googleFlightsPage.getDropDownListNumberOfTripsButton()));
 
         tripTypeDropDownListButtonElement.click();
 
-        WebElement numberOfTripsElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[contains(@class, 'VfPpkd-OkbHre-SfQLQb-M1Soyc-bN97Pc') and .//span[text()='" + numberOfTrips.getText() + "']]")));
+        WebElement numberOfTripsElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[contains(@class, 'VfPpkd-OkbHre-SfQLQb-M1Soyc-bN97Pc') and .//span[text()='" + numberOfTrips.toString() + "']]")));
 
         WebElement oneWayButtonElement = wait.until(ExpectedConditions.visibilityOf(numberOfTripsElement));
 
@@ -124,7 +124,8 @@ public class GoogleFlightsSteps {
             this.text = text;
         }
 
-        public String getText() {
+        @Override
+        public String toString() {
             return text;
         }
     }
@@ -133,18 +134,16 @@ public class GoogleFlightsSteps {
         webDriver.findElement(googleFlightsPage.getButtonDoneForCalendar()).click();
     }
 
-    public void clickSearch() {
+    public void clickButtonSearch() {
         webDriver.findElement(googleFlightsPage.getButtonSearch()).click();
     }
 
-    public void openListOfStopsNumber() {
+    public void openStopsFilter() {
         wait.until(ExpectedConditions.elementToBeClickable(googleFlightsPage.getButtonOfStopsNumberList())).click();
     }
 
-    public void changeStopsNumber(StopNumbers stopNumbers) {
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[contains(@class, 'm76nmf') and .//*[text()='" + stopNumbers.getFilterText() + "']]"))).click();
-
-
+    public void changeStopsFilter(StopNumbers stopNumbers) {
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[contains(@class, 'm76nmf') and .//*[text()='" + stopNumbers.toString() + "']]"))).click();
     }
 
     public enum StopNumbers {
@@ -159,12 +158,13 @@ public class GoogleFlightsSteps {
             this.filterText = filterText;
         }
 
-        public String getFilterText() {
+        @Override
+        public String toString() {
             return filterText;
         }
     }
 
-    public void closeList() {
+    public void closeFilter() {
         wait.until(ExpectedConditions.elementToBeClickable(googleFlightsPage.getButtonCloseForStopsList())).click();
         wait.until(ExpectedConditions.invisibilityOfElementLocated(googleFlightsPage.getButtonCloseForStopsList()));
         waitLoadingEnds();
@@ -183,7 +183,6 @@ public class GoogleFlightsSteps {
     }
 
     public void verifyDepartureAirportIATAOfFlights(String departureAirportIATA, List<WebElement> flights) {
-
         assertAll("Departure IATA codes should match",
                 flights.stream()
                         .map(flight -> () -> verifyDepartureAirportIATAofFlight(departureAirportIATA, flight))
@@ -195,16 +194,15 @@ public class GoogleFlightsSteps {
     }
 
 
-    public void verifyArrivalAirportIATAofFlight(String arrivalAirportIATA, WebElement flight) {
+    public void assertArrivalAirportIATAofFlight(String arrivalAirportIATA, WebElement flight) {
         assertEquals(arrivalAirportIATA, getArrivalAirportIATA(flight));
     }
 
 
-    public void verifyArrivalAirportIATAOfFlights(String arrivalAirportIATA, List<WebElement> flights) {
-
+    public void assertArrivalAirportIATAOfFlights(String arrivalAirportIATA, List<WebElement> flights) {
         assertAll("Arrival IATA codes should match",
                 flights.stream()
-                        .map(flight -> () -> verifyArrivalAirportIATAofFlight(arrivalAirportIATA, flight))
+                        .map(flight -> () -> assertArrivalAirportIATAofFlight(arrivalAirportIATA, flight))
         );
     }
 }
