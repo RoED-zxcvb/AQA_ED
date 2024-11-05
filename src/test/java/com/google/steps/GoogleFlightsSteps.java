@@ -2,7 +2,6 @@ package com.google.steps;
 
 import com.google.pages.GoogleFlightsPage;
 import org.openqa.selenium.*;
-import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -14,19 +13,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GoogleFlightsSteps {
 
-    WebDriver webDriver;
-
-    WebDriverWait wait;
-
-    GoogleFlightsPage googleFlightsPage;
+    private final WebDriver webDriver;
+    private final WebDriverWait wait;
+    private final GoogleFlightsPage googleFlightsPage;
 
     public GoogleFlightsSteps(WebDriver webDriver) {
         this.webDriver = webDriver;
-
-        wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
-
-        PageFactory.initElements(this.webDriver, this);
-
+        this.wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
         googleFlightsPage = new GoogleFlightsPage(webDriver);
     }
 
@@ -198,8 +191,7 @@ public class GoogleFlightsSteps {
     }
 
     public String getArrivalAirportIATA(WebElement flight) {
-        return
-                wait.until(ExpectedConditions.visibilityOfElementLocated(googleFlightsPage.getArriveAirportIATA())).getText();
+        return flight.findElement(googleFlightsPage.getArriveAirportIATA()).getText();
     }
 
 

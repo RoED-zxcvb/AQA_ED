@@ -43,8 +43,6 @@ public class GoogleFlightsTests {
 
     @AfterEach
     void afterAllTestsActions() {
-        webDriver.close();
+        webDriver.quit();
     }
-
-
 }

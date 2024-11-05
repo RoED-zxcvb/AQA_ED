@@ -3,19 +3,11 @@ package com.google.pages;
 import org.complexAQA.utils.Properties;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import java.time.Duration;
 
 public class GoogleFlightsPage {
 
-    private final WebDriver webDriver;
-
-    private final WebDriverWait wait;
-
     public GoogleFlightsPage(WebDriver webDriver) {
-        this.webDriver = webDriver;
-        wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
-        PageFactory.initElements(this.webDriver, this);
+        PageFactory.initElements(webDriver, this);
     }
 
     public static final String GOOGLE_FLIGHT_URL = Properties.getPropertyValue("googleHost") + Properties.getPropertyValue("flightsURL");
@@ -53,13 +45,6 @@ public class GoogleFlightsPage {
 
     private final By loadingBar = By.xpath("//button[contains(@aria-label, 'Close dialog')]");
 
-    public WebDriver getWebDriver() {
-        return webDriver;
-    }
-
-    public WebDriverWait getWait() {
-        return wait;
-    }
 
     public By getFieldFrom() {
         return fieldFrom;
