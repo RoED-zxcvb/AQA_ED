@@ -1,5 +1,6 @@
 package com.google.tests.web;
 
+import com.google.pages.GoogleFlightsPage;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -7,14 +8,14 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 
-public class Flights {
+public class GoogleFlightsTests {
     private WebDriver webDriver;
-    private com.google.pages.Flights flightsPage;
+    private GoogleFlightsPage flightsPage;
 
     @BeforeEach
     void beforeTestsActions() {
         webDriver = new ChromeDriver();
-        flightsPage = new com.google.pages.Flights(webDriver);
+        flightsPage = new GoogleFlightsPage(webDriver);
     }
 
     @ParameterizedTest
@@ -29,13 +30,13 @@ public class Flights {
         flightsPage.setDepartureAirportFromListByNumber(0);
         flightsPage.setTextForFieldTo(arrivalIASA);
         flightsPage.setArrivalAirportFromListByNumber(0);
-        flightsPage.chooseNumberOfTrips(com.google.pages.Flights.NumberOfTrips.ONE_WAY);
+        flightsPage.chooseNumberOfTrips(GoogleFlightsPage.NumberOfTrips.ONE_WAY);
         flightsPage.clickToDepartureDateField();
         flightsPage.chooseAvailableDepartureDateByIndex(daysToAdd);
         flightsPage.clickDoneInCalendar();
         flightsPage.clickSearch();
         flightsPage.openListOfStopsNumber();
-        flightsPage.changeStopsNumber(com.google.pages.Flights.StopNumbers.NONSTOP_ONLY);
+        flightsPage.changeStopsNumber(GoogleFlightsPage.StopNumbers.NONSTOP_ONLY);
         flightsPage.closeList();
         flightsPage.verifyDepartureAirportIATAOfFlights(departureIASA, flightsPage.getListOfFlights());
         flightsPage.verifyArrivalAirportIATAOfFlights(arrivalIASA, flightsPage.getListOfFlights());

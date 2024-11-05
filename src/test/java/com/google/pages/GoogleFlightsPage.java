@@ -5,13 +5,12 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
 import java.time.Duration;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class Flights {
+public class GoogleFlightsPage {
 
     private final WebDriver webDriver;
 
@@ -52,7 +51,7 @@ public class Flights {
 
     private final By loadingBar = By.xpath("//button[contains(@aria-label, 'Close dialog')]");
 
-    public Flights(WebDriver webDriver) {
+    public GoogleFlightsPage(WebDriver webDriver) {
         this.webDriver = webDriver;
         wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
         PageFactory.initElements(this.webDriver, this);
@@ -213,13 +212,6 @@ public class Flights {
         return flight.findElement(departureAirportIATA).getText();
     }
 
-    public String getArrivalAirportIATA(WebElement flight) {
-        return
-//                flight.findElement(arriveAirportIATA).getText();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(arriveAirportIATA)).getText();
-    }
-
-
     public void verifyDepartureAirportIATAofFlight(String departureAirportIATA, WebElement flight) {
         assertEquals(departureAirportIATA, getDepartureAirportIATA(flight));
     }
@@ -232,18 +224,16 @@ public class Flights {
         );
     }
 
+    public String getArrivalAirportIATA(WebElement flight) {
+        return
+                wait.until(ExpectedConditions.visibilityOfElementLocated(arriveAirportIATA)).getText();
+    }
+
+
     public void verifyArrivalAirportIATAofFlight(String arrivalAirportIATA, WebElement flight) {
         assertEquals(arrivalAirportIATA, getArrivalAirportIATA(flight));
     }
 
-    public static void main(String[] args) {
-        List<Integer> numbers = List.of(1, 2, 3);
-        assertAll("Check if numbers are positive",
-                numbers.stream()
-                        .map(number -> () -> assertTrue(number > 0))
-        );
-
-    }
 
     public void verifyArrivalAirportIATAOfFlights(String arrivalAirportIATA, List<WebElement> flights) {
 
@@ -252,8 +242,6 @@ public class Flights {
                         .map(flight -> () -> verifyArrivalAirportIATAofFlight(arrivalAirportIATA, flight))
         );
     }
-
-
 }
 
 
