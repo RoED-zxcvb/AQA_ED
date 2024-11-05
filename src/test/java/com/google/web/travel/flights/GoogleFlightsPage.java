@@ -65,9 +65,8 @@ public class GoogleFlightsPage {
 
     public void waitLoadingEnds(){
         try{
-//            WebElement loadingBarElement = wait.until(ExpectedConditions.visibilityOfElementLocated(loadingBar));
-//            wait.until(ExpectedConditions.invisibilityOf(loadingBarElement));
-            wait.until(ExpectedConditions.invisibilityOfElementLocated(loadingBar));
+            WebElement loadingBarElement = wait.until(ExpectedConditions.visibilityOfElementLocated(loadingBar));
+            wait.until(ExpectedConditions.invisibilityOf(loadingBarElement));
         }
         catch (TimeoutException E){
             System.out.println("Loading bar was very fast");
@@ -99,7 +98,7 @@ public class GoogleFlightsPage {
             List<WebElement> listOfCountriesTogglesElements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(listOfCountriesToggles));
             listOfCountriesTogglesElements.forEach(WebElement::click);
         } catch (TimeoutException e) {
-            System.out.println("no city lists with airports");
+            System.out.println("No expandable city lists with airports");
         }
     }
 
@@ -215,7 +214,9 @@ public class GoogleFlightsPage {
     }
 
     public String getArrivalAirportIATA(WebElement flight) {
-        return flight.findElement(arriveAirportIATA).getText();
+        return
+//                flight.findElement(arriveAirportIATA).getText();
+        wait.until(ExpectedConditions.visibilityOfElementLocated(arriveAirportIATA)).getText();
     }
 
 

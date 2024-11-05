@@ -21,6 +21,7 @@ public class GoogleFlightTests {
     @CsvSource({
             "ADB, IST, 1",
             "IST, ESB, 3",
+            "LIS, FNC, 4",
     })
     public void testFLightIASAForNonStopDirectFLights(String departureIASA, String arrivalIASA, int daysToAdd) {
         flightsPage.open();
