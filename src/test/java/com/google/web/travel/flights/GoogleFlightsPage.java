@@ -9,15 +9,15 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class FlightsPage {
+public class GoogleFlightsPage {
 
     private final WebDriver webDriver;
 
     WebDriverWait wait;
 
-    final private String googleFLightURL = Properties.getPropertyValue("googleHost") + Properties.getPropertyValue("flightsURL");
+    final private String googleFlightURL = Properties.getPropertyValue("googleHost") + Properties.getPropertyValue("flightsURL");
 
     private final By fieldFrom = By.cssSelector("[aria-label='Where from?']");
 
@@ -27,12 +27,13 @@ public class FlightsPage {
 
     private final By listOfCountriesToggles = By.xpath("//*[contains(@class, 'dm1EBe')]//button[contains(@class, 'VfPpkd-Bz112c-LgbsSe') and @aria-expanded='false']");
 
-    private final By listOfDepartureAirports = By.xpath("//*[contains(@class, 'DFGgtd')]//*[contains(@class, 'n4HaVc')]");
-    private final By listOfArrivalAirports = By.xpath("//*[contains(@class, 'DFGgtd')]//*[contains(@class, 'n4HaVc')]");
+    private final By listOfDepartureAirports = By.cssSelector(".DFGgtd .n4HaVc");
 
-    private final By buttonsOfCalendarDates = By.xpath("//*[contains(@class, 'WhDFk') and contains(@aria-hidden, 'false') and .//*[contains(@role, 'button')]]");
+    private final By listOfArrivalAirports = By.cssSelector(".DFGgtd .n4HaVc");
 
-    private final By DropDownListNumberOfTripsButton = By.className("VfPpkd-aPP78e");
+    private final By buttonsOfCalendarDates = By.cssSelector(".WhDFk[aria-hidden='false'] [role='button']");
+
+    private final By dropDownListNumberOfTripsButton = By.className("VfPpkd-aPP78e");
 
     private final By buttonDoneForCalendar = By.xpath("//button[contains(@class, 'VfPpkd-LgbsSe-OWXEXe-dgl2Hf') and .//span[text()='Done']]");
 
@@ -43,22 +44,33 @@ public class FlightsPage {
 
     private final By buttonCloseForStopsList = By.xpath("//button[contains(@aria-label, 'Close dialog')]");
 
-    private final By listOfFlights = By.xpath("//*[@class='pIav2d']");
+    private final By listOfFlights = By.className("pIav2d");
 
     private final By departureAirportIATA = By.xpath("(//*[contains(@class, 'PTuQse')]//span[contains(@jscontroller, 'cNtv4b')])[1]");
 
     private final By arriveAirportIATA = By.xpath("(//*[contains(@class, 'PTuQse')]//span[contains(@jscontroller, 'cNtv4b')])[2]");
 
-    public FlightsPage(WebDriver webDriver) {
-        this.webDriver = webDriver;
-        wait = new WebDriverWait(webDriver, Duration.ofSeconds(2));
-        PageFactory.initElements(this.webDriver, this);
+    private final By loadingBar = By.xpath("//button[contains(@aria-label, 'Close dialog')]");
 
+    public GoogleFlightsPage(WebDriver webDriver) {
+        this.webDriver = webDriver;
+        wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
+        PageFactory.initElements(this.webDriver, this);
     }
 
     public void open() {
-        webDriver.navigate().to(googleFLightURL);
+        webDriver.navigate().to(googleFlightURL);
         webDriver.manage().window().fullscreen();
+    }
+
+    public void waitLoadingEnds(){
+        try{
+            WebElement loadingBarElement = wait.until(ExpectedConditions.visibilityOfElementLocated(loadingBar));
+            wait.until(ExpectedConditions.invisibilityOf(loadingBarElement));
+        }
+        catch (TimeoutException E){
+            System.out.println("Loading bar was very fast");
+        }
     }
 
     public void setTextForFieldFrom(String textForSearch) {
@@ -107,7 +119,7 @@ public class FlightsPage {
         }
     }
 
-    /// First available day starts from 0
+    /// Current day index = 0
     public void chooseAvailableDepartureDateByIndex(int dayNumber) {
 
         clickToDepartureDateField();
@@ -122,7 +134,7 @@ public class FlightsPage {
 
     public void chooseNumberOfTrips(NumberOfTrips numberOfTrips) {
 
-        WebElement tripTypeDropDownListButtonElement = wait.until(ExpectedConditions.elementToBeClickable(DropDownListNumberOfTripsButton));
+        WebElement tripTypeDropDownListButtonElement = wait.until(ExpectedConditions.elementToBeClickable(dropDownListNumberOfTripsButton));
 
         tripTypeDropDownListButtonElement.click();
 
@@ -188,12 +200,9 @@ public class FlightsPage {
     }
 
     public void closeList() {
-
-        WebElement closeButton = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(buttonCloseForStopsList)).stream().filter(WebElement::isDisplayed).toList().getFirst();
-
-        closeButton.click();
-
-        wait.until(ExpectedConditions.invisibilityOf(closeButton));
+      wait.until(ExpectedConditions.elementToBeClickable(buttonCloseForStopsList)).click();
+      wait.until(ExpectedConditions.invisibilityOfElementLocated(buttonCloseForStopsList));
+      waitLoadingEnds();
     }
 
     public List<WebElement> getListOfFlights() {
@@ -214,16 +223,35 @@ public class FlightsPage {
     }
 
     public void verifyDepartureAirportIATAOfFlights(String departureAirportIATA, List<WebElement> flights) {
-        flights.forEach(i -> verifyDepartureAirportIATAofFlight(departureAirportIATA, i));
+
+        assertAll("Departure IATA codes should match",
+                flights.stream()
+                        .map(flight -> () -> verifyDepartureAirportIATAofFlight(departureAirportIATA, flight))
+        );
     }
 
     public void verifyArrivalAirportIATAofFlight(String arrivalAirportIATA, WebElement flight) {
         assertEquals(arrivalAirportIATA, getArrivalAirportIATA(flight));
     }
 
-    public void verifyArrivalAirportIATAOfFlights(String arrivalAirportIATA, List<WebElement> flights) {
-        flights.forEach(i -> verifyArrivalAirportIATAofFlight(arrivalAirportIATA, i));
+    public static void main(String[] args) {
+        List<Integer> numbers = List.of(1, 2, 3);
+        assertAll("Check if numbers are positive",
+                numbers.stream()
+                        .map(number -> () -> assertTrue(number > 0))
+        );
+
     }
+
+    public void verifyArrivalAirportIATAOfFlights(String arrivalAirportIATA, List<WebElement> flights) {
+
+        assertAll("Arrival IATA codes should match",
+                flights.stream()
+                        .map(flight -> () -> verifyArrivalAirportIATAofFlight(arrivalAirportIATA, flight))
+        );
+    }
+
+
 }
 
 

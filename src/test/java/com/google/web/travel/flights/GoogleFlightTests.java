@@ -6,20 +6,20 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
-
-public class FlightTests {
+// TODO переименовать в гугл флайт
+public class GoogleFlightTests {
     private WebDriver webDriver;
-    private FlightsPage flightsPage;
+    private GoogleFlightsPage flightsPage;
 
     @BeforeEach
     void beforeTestsActions() {
         webDriver = new ChromeDriver();
-        flightsPage = new FlightsPage(webDriver);
+        flightsPage = new GoogleFlightsPage(webDriver);
     }
 
     @ParameterizedTest
     @CsvSource({
-            "ADB, IST, 0",
+            "ADB, IST, 1",
             "IST, ESB, 3",
     })
     public void testFLightIASAForNonStopDirectFLights(String departureIASA, String arrivalIASA, int daysToAdd) {
@@ -28,13 +28,13 @@ public class FlightTests {
         flightsPage.setDepartureAirportFromListByNumber(0);
         flightsPage.setTextForFieldTo(arrivalIASA);
         flightsPage.setArrivalAirportFromListByNumber(0);
-        flightsPage.chooseNumberOfTrips(FlightsPage.NumberOfTrips.ONE_WAY);
+        flightsPage.chooseNumberOfTrips(GoogleFlightsPage.NumberOfTrips.ONE_WAY);
         flightsPage.clickToDepartureDateField();
         flightsPage.chooseAvailableDepartureDateByIndex(daysToAdd);
         flightsPage.clickDoneInCalendar();
         flightsPage.clickSearch();
         flightsPage.openListOfStopsNumber();
-        flightsPage.changeStopsNumber(FlightsPage.StopNumbers.NONSTOP_ONLY);
+        flightsPage.changeStopsNumber(GoogleFlightsPage.StopNumbers.NONSTOP_ONLY);
         flightsPage.closeList();
         flightsPage.verifyDepartureAirportIATAOfFlights(departureIASA, flightsPage.getListOfFlights());
         flightsPage.verifyArrivalAirportIATAOfFlights(arrivalIASA, flightsPage.getListOfFlights());
