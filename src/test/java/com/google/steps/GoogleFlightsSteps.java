@@ -1,7 +1,12 @@
 package com.google.steps;
 
+import com.google.config.WebDriverManager;
 import com.google.pages.GoogleFlightsPage;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -17,18 +22,19 @@ public class GoogleFlightsSteps {
     private final WebDriverWait wait;
     private final GoogleFlightsPage googleFlightsPage;
 
-    public GoogleFlightsSteps(WebDriver webDriver) {
-        this.webDriver = webDriver;
+    public GoogleFlightsSteps() {
+        this.webDriver = WebDriverManager.getDriver();
         this.wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
         googleFlightsPage = new GoogleFlightsPage(webDriver);
     }
 
-
+    @When("I open google flight page")
     public void open() {
         webDriver.navigate().to(GoogleFlightsPage.GOOGLE_FLIGHT_URL);
         webDriver.manage().window().fullscreen();
     }
 
+    @When("I waiting for the loading bar to disappear")
     public void waitLoadingEnds() {
         try {
             WebElement loadingBarElement = wait.until(ExpectedConditions.visibilityOfElementLocated(googleFlightsPage.getLoadingBar()));
@@ -38,26 +44,21 @@ public class GoogleFlightsSteps {
         }
     }
 
+    @When("I enter departure airport {string}")
     public void enterDepartureAirport(String textForSearch) {
         WebElement fieldFromElement = wait.until(ExpectedConditions.visibilityOfElementLocated(googleFlightsPage.getFieldFrom()));
         fieldFromElement.clear();
         fieldFromElement.sendKeys(textForSearch);
     }
 
+    @When("I enter arrival airport {string}")
     public void enterArrivalAirport(String textForSearch) {
         WebElement fieldToElement = wait.until(ExpectedConditions.visibilityOfElementLocated(googleFlightsPage.getFieldTo()));
         fieldToElement.clear();
         fieldToElement.sendKeys(textForSearch);
     }
 
-    public void selectDepartureAirportByIndex(int number) {
-        expandCitiesInAirportLists();
-
-        List<WebElement> listOfAirportsElements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(googleFlightsPage.getListOfDepartureAirports()));
-
-        listOfAirportsElements.get(number).click();
-    }
-
+    @When("I expand airports lists of cities")
     public void expandCitiesInAirportLists() {
         try {
             List<WebElement> listOfCountriesTogglesElements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(googleFlightsPage.getListOfCountriesToggles()));
@@ -67,7 +68,18 @@ public class GoogleFlightsSteps {
         }
     }
 
-    public void setArrivalAirportFromListByNumber(int number) {
+    @When("I select departure airport by index {int}")
+    public void selectDepartureAirportByIndex(int number) {
+        expandCitiesInAirportLists();
+
+        List<WebElement> listOfAirportsElements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(googleFlightsPage.getListOfDepartureAirports()));
+
+        listOfAirportsElements.get(number).click();
+    }
+
+
+    @When("I select arrival airport by index {int}")
+    public void selectArrivalAirportByIndex(int number) {
         expandCitiesInAirportLists();
 
         List<WebElement> listOfAirportsElements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(googleFlightsPage.getListOfArrivalAirports()));
@@ -75,6 +87,7 @@ public class GoogleFlightsSteps {
         listOfAirportsElements.get(number).click();
     }
 
+    @When("I open departure calendar")
     public void clickToDepartureDateField() {
         try {
             WebElement fieldDepartureDateElement = wait.until(ExpectedConditions.elementToBeClickable(googleFlightsPage.getFieldDepartureDate()));
@@ -85,6 +98,7 @@ public class GoogleFlightsSteps {
     }
 
     /// Current day index = 0
+    @When("I select departure date in calendar by number of available day {int}")
     public void chooseAvailableDepartureDateByIndex(int dayNumber) {
 
         clickToDepartureDateField();
@@ -97,21 +111,6 @@ public class GoogleFlightsSteps {
 
     }
 
-    public void changeNumberOfTrips(NumberOfTrips numberOfTrips) {
-
-        WebElement tripTypeDropDownListButtonElement = wait.until(ExpectedConditions.elementToBeClickable(googleFlightsPage.getDropDownListNumberOfTripsButton()));
-
-        tripTypeDropDownListButtonElement.click();
-
-        WebElement numberOfTripsElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[contains(@class, 'VfPpkd-OkbHre-SfQLQb-M1Soyc-bN97Pc') and .//span[text()='" + numberOfTrips.toString() + "']]")));
-
-        WebElement oneWayButtonElement = wait.until(ExpectedConditions.visibilityOf(numberOfTripsElement));
-
-        oneWayButtonElement.click();
-
-        wait.until(ExpectedConditions.invisibilityOf(numberOfTripsElement));
-
-    }
 
     public enum NumberOfTrips {
         ROUND_TRIP("Round trip"),
@@ -128,25 +127,62 @@ public class GoogleFlightsSteps {
         public String toString() {
             return text;
         }
+
+        public static NumberOfTrips fromString(String text) {
+            for (NumberOfTrips trip : NumberOfTrips.values()) {
+                if (trip.text.equalsIgnoreCase(text)) {
+                    return trip;
+                }
+            }
+            throw new IllegalArgumentException("No enum constant for value: " + text);
+        }
     }
 
+    @When("I select the trip type {string}")
+    public void selectTripType(String tripTypeText) {
+        NumberOfTrips tripType = NumberOfTrips.fromString(tripTypeText);
+        changeNumberOfTrips(tripType);
+    }
+
+    public void changeNumberOfTrips(NumberOfTrips numberOfTrips) {
+        WebElement tripTypeDropDownListButtonElement = wait.until(ExpectedConditions.visibilityOfElementLocated(googleFlightsPage.getDropDownListNumberOfTripsButton()));
+
+
+        moveToElement(tripTypeDropDownListButtonElement);
+
+        tripTypeDropDownListButtonElement.click();
+
+        WebElement numberOfTripsElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//li[contains(@class, 'VfPpkd-OkbHre-SfQLQb-M1Soyc-bN97Pc') and .//span[text()='" + numberOfTrips.toString() + "']]")));
+
+        WebElement oneWayButtonElement = wait.until(ExpectedConditions.visibilityOf(numberOfTripsElement));
+
+        oneWayButtonElement.click();
+
+        wait.until(ExpectedConditions.invisibilityOf(numberOfTripsElement));
+
+    }
+
+    public void moveToElement(WebElement element) {
+        Actions actions = new Actions(webDriver);
+        actions.moveToElement(element).perform();
+    }
+
+    @When("I click calendar button Done")
     public void clickDoneInCalendar() {
         webDriver.findElement(googleFlightsPage.getButtonDoneForCalendar()).click();
     }
 
+    @When("I click button Search")
     public void clickButtonSearch() {
         webDriver.findElement(googleFlightsPage.getButtonSearch()).click();
     }
 
-    public void openStopsFilter() {
+    @When("I open stops filter")
+    public void openStopsFilterList() {
         wait.until(ExpectedConditions.elementToBeClickable(googleFlightsPage.getButtonOfStopsNumberList())).click();
     }
 
-    public void changeStopsFilter(StopNumbers stopNumbers) {
-        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[contains(@class, 'm76nmf') and .//*[text()='" + stopNumbers.toString() + "']]"))).click();
-    }
-
-    public enum StopNumbers {
+    public enum FiltersOfStops {
         ANU_NUMBER_OF_STOPS("Any number of stops"),
         NONSTOP_ONLY("Nonstop only"),
         ONE_STOP_OR_FEWER("1 stop or fewer"),
@@ -154,7 +190,7 @@ public class GoogleFlightsSteps {
 
         private final String filterText;
 
-        StopNumbers(String filterText) {
+        FiltersOfStops(String filterText) {
             this.filterText = filterText;
         }
 
@@ -162,14 +198,35 @@ public class GoogleFlightsSteps {
         public String toString() {
             return filterText;
         }
+
+        public static FiltersOfStops fromString(String text) {
+            for (FiltersOfStops numberOfStops : FiltersOfStops.values()) {
+                if (numberOfStops.filterText.equalsIgnoreCase(text)) {
+                    return numberOfStops;
+                }
+            }
+            throw new IllegalArgumentException("No enum constant for value: " + text);
+        }
     }
 
+    @When("I select the stops filter {string}")
+    public void selectFilterOfStops(String filterText) {
+        FiltersOfStops filtersOfStops = FiltersOfStops.fromString(filterText);
+        changeStopsFilter(filtersOfStops);
+    }
+
+    public void changeStopsFilter(FiltersOfStops filtersOfStops) {
+        wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//div[contains(@class, 'm76nmf') and .//*[text()='" + filtersOfStops.toString() + "']]"))).click();
+    }
+
+    @When("I close filter list")
     public void closeFilter() {
         wait.until(ExpectedConditions.elementToBeClickable(googleFlightsPage.getButtonCloseForStopsList())).click();
         wait.until(ExpectedConditions.invisibilityOfElementLocated(googleFlightsPage.getButtonCloseForStopsList()));
         waitLoadingEnds();
     }
 
+    @When("I get list of flights")
     public List<WebElement> getListOfFlights() {
         return wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(googleFlightsPage.getListOfFlights())).stream().filter(WebElement::isDisplayed).toList();
     }
@@ -178,16 +235,22 @@ public class GoogleFlightsSteps {
         return flight.findElement(googleFlightsPage.getDepartureAirportIATA()).getText();
     }
 
-    public void verifyDepartureAirportIATAofFlight(String departureAirportIATA, WebElement flight) {
+    public void assertDepartureAirportIATAofFlight(String departureAirportIATA, WebElement flight) {
         assertEquals(departureAirportIATA, getDepartureAirportIATA(flight));
     }
 
-    public void verifyDepartureAirportIATAOfFlights(String departureAirportIATA, List<WebElement> flights) {
+    public void assertDepartureAirportIATAOfFlights(String departureAirportIATA, List<WebElement> flights) {
         assertAll("Departure IATA codes should match",
                 flights.stream()
-                        .map(flight -> () -> verifyDepartureAirportIATAofFlight(departureAirportIATA, flight))
+                        .map(flight -> () -> assertDepartureAirportIATAofFlight(departureAirportIATA, flight))
         );
     }
+
+    @Then("I check all departure airports IATA of flights equals {string}")
+    public void assertDepartureAirportIATAOfFlightsEquals (String departureAirportIATA){
+        assertDepartureAirportIATAOfFlights(departureAirportIATA,getListOfFlights());
+    }
+
 
     public String getArrivalAirportIATA(WebElement flight) {
         return flight.findElement(googleFlightsPage.getArriveAirportIATA()).getText();
@@ -204,5 +267,19 @@ public class GoogleFlightsSteps {
                 flights.stream()
                         .map(flight -> () -> assertArrivalAirportIATAofFlight(arrivalAirportIATA, flight))
         );
+    }
+
+    @Then("I check all arrival airports IATA of flights equals {string}")
+    public void assertArrivalAirportIATAOfFlightsEquals (String arrivalAirportIATA){
+        assertArrivalAirportIATAOfFlights(arrivalAirportIATA,getListOfFlights());
+    }
+
+    @Given("Sleep {int} sec")
+    public void someSleep (int sec){
+        try {
+            Thread.sleep(sec*1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
