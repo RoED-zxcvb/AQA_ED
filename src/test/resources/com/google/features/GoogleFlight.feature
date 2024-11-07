@@ -1,6 +1,6 @@
 Feature: someFeatureName
   Scenario Outline: someScenarioNameForPassTest
-    When I open google flight page
+    Given Google flight page open
     When I enter arrival airport "<arrivalAirport>"
     When I select arrival airport by index 0
     When I enter departure airport "<departureAirport>"

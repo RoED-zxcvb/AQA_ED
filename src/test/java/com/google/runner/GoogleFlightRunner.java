@@ -1,5 +1,8 @@
 package com.google.runner;
 
+import com.google.config.WebDriverManager;
+import io.cucumber.java.AfterAll;
+import io.cucumber.java.BeforeAll;
 import org.junit.platform.suite.api.*;
 
 import static io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
@@ -11,15 +14,14 @@ import static io.cucumber.core.options.Constants.PLUGIN_PROPERTY_NAME;
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME,
         value = "io.qameta.allure.cucumber7jvm.AllureCucumber7Jvm")
 public class GoogleFlightRunner {
-//
-//    @BeforeAll
-//    public static void before(){
-//        WebDriverManager.getDriver().manage().window().fullscreen();
-//    }
-//
-//    @AfterAll
-//    public static void after(){
-//        WebDriverManager.getDriver().quit();
-//    }
+
+    @BeforeAll
+    public static void before(){
+    }
+
+    @AfterAll
+    public static void after(){
+        WebDriverManager.getDriver().quit();
+    }
 }
 

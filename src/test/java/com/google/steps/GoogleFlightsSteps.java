@@ -28,7 +28,7 @@ public class GoogleFlightsSteps {
         googleFlightsPage = new GoogleFlightsPage(webDriver);
     }
 
-    @When("I open google flight page")
+    @Given("Google flight page open")
     public void open() {
         webDriver.navigate().to(GoogleFlightsPage.GOOGLE_FLIGHT_URL);
         webDriver.manage().window().fullscreen();
@@ -272,14 +272,5 @@ public class GoogleFlightsSteps {
     @Then("I check all arrival airports IATA of flights equals {string}")
     public void assertArrivalAirportIATAOfFlightsEquals (String arrivalAirportIATA){
         assertArrivalAirportIATAOfFlights(arrivalAirportIATA,getListOfFlights());
-    }
-
-    @Given("Sleep {int} sec")
-    public void someSleep (int sec){
-        try {
-            Thread.sleep(sec*1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
